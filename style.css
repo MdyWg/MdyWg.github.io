@@ -1,0 +1,256 @@
+/* STYLE SECTIONING TAGS */
+* { /* Reset the space of the webpage */
+   margin: 0px;
+   padding: 0px;
+}
+
+header {
+  background-color: darkblue;
+}
+#homebody {
+ background-color: darkblue; 
+}
+
+.factGenerator {
+  background-image: url("assets/wave.png");
+  border-radius: 10px;
+  text-align: center; 
+  padding: 2em;
+  padding-bottom: 2.25em;
+  margin-left: 25%;
+  margin-right: 25%
+}
+
+#flexContainer {
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 2em;
+}
+
+.flexItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* STYLE TEXT */
+
+#title {
+  padding-top: 5em;
+  padding-bottom: 0em;
+  color: white;
+  font-size: 4em;
+  font-family: verdana;
+  text-decoration: underline;
+  text-align: left;
+}
+
+#preview {
+  padding-bottom: 5em;
+  color: white;
+  font-size: 2em;
+  font-family: arial;
+  padding-top: 0em;
+  padding-left: 0em;
+}
+
+h1 {
+  padding-top: 3em;
+  padding-bottom: 3em;
+  color: white;
+  font-size: 4em;
+  font-family: verdana;
+  text-decoration: underline;
+  text-align: center;
+}
+
+#problem {
+  padding-top: 2em;
+  color: white;
+  font-size: 2em;
+  font-family: verdana;
+  text-decoration: underline;
+  text-align: center;
+}
+
+#ta {
+  padding-top: 3em;
+  padding-bottom: 0em;
+  color: white;
+  font-size: 4em;
+  font-family: verdana;
+  text-decoration: underline;
+  text-align: center;
+}
+
+#pdescription {
+  padding-top: 1em;
+  color: white;
+  line-height: 1.4em;
+  font-family: arial;
+  font-size: 1.5em;
+  padding-left: 7em;
+  padding-right: 7em;
+  padding-bottom: 9em;
+}
+
+li {
+  margin-left: 1em;
+}
+
+h3 {
+  text-decoration: underline;
+  font-family: verdana;
+  font-size: 1.5em;
+}
+
+#fact {
+  font-family: arial;
+  font-size: 1.1em;
+}
+
+#credit {
+  text-align: center;
+  font-size: 0.75em;
+  padding-top: 4em;
+  color: white;
+}
+
+#credit a {
+  color: lightblue;
+}
+
+.subtitle {
+  color: royalblue;
+  font-size: 2em;
+  margin-left: 1em;
+  padding-top: .5em;
+}
+
+.subdescription {
+  padding: 1em;
+  margin-left: 4em;
+  font-size: 1.5em;
+  font-family: verdana;
+  line-height: 1.5em;
+}
+
+.subdescription a {
+  color: royalblue;
+}
+
+#list {
+  margin-left: 7em;
+  font-size: 1.5em;
+  font-family: verdana;
+}
+
+#list a {
+  color: royalblue;
+  padding: 1em;
+}
+
+.liTwo {
+  padding: .5em;
+}
+
+#creditTwo {
+  text-align: center;
+  font-size: 0.75em;
+  padding-top: 4em;
+}
+
+#creditTwo a{
+  color: royalblue;
+}
+
+#donate {
+  padding: 1em;
+  padding-left: 10em;
+  padding-right: 10em;
+  font-family: verdana;
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+.link a {
+  font-family: verdana;
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+}
+
+#tapreview {
+  padding-bottom: 6em;
+  color: white;
+  font-size: 2em;
+  font-family: arial;
+  padding-top: 0em;
+  text-align: center;
+}
+
+/* STYLE IMAGES */
+
+#home {
+  background-image: url("assets/fishschool.jpg");
+}
+
+img {
+  width: 300px;
+  height: 300px;
+}
+
+.wwf {
+  padding-top: 3em;
+  padding-bottom: 3em;
+  height: 200px;
+  width: 250px;
+}
+
+/* STYLE NAV BAR */
+.nav {
+  list-style-type: none;
+  padding: 1em;
+  background-color: darkblue;
+  text-align: right;
+}
+
+.li {
+  display: inline;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  padding: 1em;
+  font-size: 1.25em;
+  font-family: arial;
+}
+
+.nav a:hover {
+  background-color: blue;
+}
+
+/* STYLE BUTTONS */
+
+#factgen{
+  padding: 1em;
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+  font-family: Brush Script MT;
+  font-size: 1.2em;
+}
+
+#factgen:hover {
+  background-color: lightblue;
+  border-radius: 10px;
+}
+
+.link {
+  background-color: darkblue;
+  padding: 1em;
+  border-color: darkblue;
+  border-radius: 10px;
+  width: 100px;
+}
