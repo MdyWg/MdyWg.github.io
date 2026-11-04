@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Mandy's Portfolio</title>
+        <link rel="stylesheet" href="./css/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li class="tab1 purple"><a href="home.html">Home</a></li>
+                    <li class="tab2 purple"><a href="about.html">About Me</a></li>
+                    <li class="tab3 purple"><a href="experiences.html">Experiences</a></li>
+                    <li class="tab4 purple"><a href="projects.html">Projects</a></li>
+                    <li class="tab5 purple"><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="content-body purple tab3">
+            <h2 id="exp-title">Experiences</h2>
+            <div class="rope-board">
+                <!-- script.js draws the rope and moves it with the notes -->
+                <svg class="rope" aria-hidden="true">
+                    <path class="rope-base"/>
+                    <path class="rope-twist"/>
+                </svg>
+                <span class="rope-pin rope-pin-1"></span>
+                <span class="rope-pin rope-pin-2"></span>
+                <span class="rope-pin rope-pin-3"></span>
+                <span class="rope-pin rope-pin-4"></span>
+                <span class="rope-pin rope-pin-5"></span>
+
+                <div class="exp-notes">
+                    <article class="exp-note">
+                        <img src="./img/cs1113.png" alt="CS1113 attendance tracker" class="exp-img"/>
+                        <h3>Computer Science Course Assistant</h3>
+                        <h4>September 2025 - Present</h4>
+                        <p>I currently work as a CS course assistant for CS 1113. As a course assistant, I teach weekly lab sections, host office hours, and conduct homework and quiz gradings for students.</p>
+                    </article>
+
+                    <article class="exp-note">
+                        <h3>Flexible AI-enabled Mechatronics Systems Lab (FAMS)</h3>
+                        <h4>September 2025 - January 2026</h4>
+                        <p>Part of the computer vision subteam for FAMS, where I was a researcher. I learned the fundamentals of MONAI, a PyTorch-based framework for training medical imaging data, and how to apply it within the scope of 3D segmentation of medical images, especially for tumor detection.</p>
+                    </article>
+
+                    <article class="exp-note">
+                        <img src="./img/rdt-logo.png" alt="RDT logo" class="exp-img"/>
+                        <h3>Robotic Design Team</h3>
+                        <h4>January 2025 - Present</h4>
+                        <p>One of the leads for the Robotic Design Team's (RDT) software competency, whose goal is to participate in NASA's Lunabotics competition. More specifically, I am currently the software systems engineer and I work with the mechanical and electrical systems engineers to plan and design robot requirements and specifications.</p>
+                    </article>
+
+                    <article class="exp-note">
+                        <h3>America Reads Tutor</h3>
+                        <h4>October 2024 - January 2025</h4>
+                        <p>Worked alongside elementary school teachers in the classroom to help teach fifth grade students subjects such as reading and math.</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <script src="./js/script.js"></script>
+    </body>
+</html>

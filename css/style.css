@@ -1,0 +1,1364 @@
+@import url('var.css');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    background-color: var(--c-bg);
+    background-image:
+        linear-gradient(#ffffff 2px, transparent 2px),
+        linear-gradient(90deg, #ffffff 2px, transparent 2px);
+    background-size: 40px 40px;
+    font-family: var(--ff-content);
+    scroll-behavior: smooth;
+}
+
+/* folder grows to fill whatever height the tabs leave */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    isolation: isolate; /* keeps the z-index: -1 header in front of body so it stays clickable */
+}
+
+/* folder body: white graph paper inside the grainy purple border */
+/* margins match the ::before overhang so the folder reaches the viewport edges */
+.content-body {
+    flex: 1;
+    margin: 30px;
+    padding-bottom: 2rem;
+    position: relative;
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(var(--c-bg) 1px, transparent 1px),
+        linear-gradient(90deg, var(--c-bg) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+.tab1 { 
+    --pg-bg: var(--gp-bg); 
+}
+.tab2 { 
+    --pg-bg: var(--l-bg1); 
+}
+.tab3 { 
+    --pg-bg: var(--l-bg2); 
+}
+.tab4 {
+    --pg-bg: var(--l-bg3);
+}
+.tab5 {
+    --pg-bg: var(--l-bg4);
+}
+
+.content-body::before {
+    content: "";
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    bottom: -30px;
+    left: -30px;
+    background-image: var(--pg-bg);
+    /* wide purple glow so the folder edge fades into the graph paper background */
+    box-shadow: 0 -6px 32px rgba(122, 69, 214, 0.45);
+    z-index: -1;
+}
+
+nav {
+    width: 78%;
+    margin-top: 14%;
+}
+
+ul {
+    display: flex;
+    list-style-type: none;
+    text-align: center;
+}
+
+/* behind the folder, so a lifted tab looks like it's being pulled out of it */
+header {
+    position: relative;
+    z-index: -1;
+}
+
+/* the li stays still as the hover target so the swing can't slip off the cursor */
+nav li {
+    --tab-h: clamp(50px, 4.5vw, 90px);
+    --tuck: 80px; /* extra tab hidden behind the folder, covers the gap when lifted */
+    font-size: clamp(1.25rem, 1.8vw, 2.25rem);
+    line-height: var(--tab-h);
+    width: 100%;
+    margin-right: -5%;
+}
+
+nav a {
+    display: block;
+    padding-bottom: var(--tuck);
+    margin-bottom: calc(-1 * var(--tuck));
+    background-image: var(--pg-bg);
+    clip-path: polygon(
+        13% calc(var(--tab-h) * 0.25),
+        20% calc(var(--tab-h) * 0.1),
+        80% calc(var(--tab-h) * 0.1),
+        87% calc(var(--tab-h) * 0.25),
+        100% var(--tab-h),
+        100% 100%,
+        0 100%,
+        0 var(--tab-h)
+    );
+    /* overshoots slightly on the way up */
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+nav li:nth-child(1) { z-index: 5; }
+nav li:nth-child(2) { z-index: 4; }
+nav li:nth-child(3) { z-index: 3; }
+nav li:nth-child(4) { z-index: 2; }
+nav li:nth-child(5) { z-index: 1; }
+
+a {
+  text-decoration: none;
+  font-weight: 600;
+  color: black;
+}
+
+nav li:hover {
+    z-index: 10;
+}
+
+@media (hover: hover) and (min-width: 768px) {
+    nav li:hover a,
+    nav a:focus-visible {
+        transform: translateY(calc(var(--tab-h) * -0.3));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    nav a {
+        transition: none;
+    }
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    padding: 1% 5%;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1% 5%;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+h1 {
+    padding-top: 2%;
+    padding-bottom: 3%;
+    font-size: 4rem;
+    border-bottom: 2px solid black;
+    width: 80%;
+    margin: 0 auto;
+}
+
+h2 {
+    border-bottom: 2px solid black;
+    width:50%;
+    margin: 0 auto 3%;
+    padding-top: 3%;
+    font-size: 3rem;
+}
+
+h3 {
+    font-size: 2rem;
+    margin-top: 5%;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+/* home page specific styling */
+/* the outside of the folder, the other pages show the inside */
+.home-folder {
+    flex: 1;
+    position: relative;
+    display: flex;
+    min-height: 36rem;
+    background-image: var(--gp-bg);
+    /* wide purple glow so the folder edge fades into the graph paper background */
+    box-shadow: 0 -6px 32px rgba(122, 69, 214, 0.45);
+}
+
+/* clips here, not on the folder, so the butterfly can stand above the folder edge */
+.home-stage {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1rem 6rem;
+    overflow: hidden;
+}
+
+/* butterfly perched on the top edge of the folder */
+/*
+ * Clips the butterfly so its moving wings can never change the size of the page, which
+ * makes the scrollbars flicker. Runs off the top of the page and 20px past the folder edge.
+ */
+.perch-layer {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: calc(100% - 20px);
+    height: 100vw;
+    overflow: clip;
+    pointer-events: none;
+}
+
+.perch {
+    position: absolute;
+    bottom: 20px;
+    right: 2vw;
+    width: min(18vw, 26rem);
+    aspect-ratio: 699 / 598;
+    /*
+     * The --vars are set by script.js during the flight and default to the perched spot.
+     * translateY puts the feet on the edge, scaleX faces it away from the trail.
+     */
+    transform:
+        translate(var(--fly-x, 0px), var(--fly-y, 0px))
+        rotate(var(--fly-r, 0deg))
+        scale(var(--fly-s, 1))
+        translateY(3%)
+        scaleX(-1);
+    pointer-events: none;
+    filter: drop-shadow(2px 4px 4px rgba(40, 20, 80, 0.3));
+}
+
+/* dashed flight path, drawn by script.js in the space above the folder */
+.flight-trail {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    bottom: 100%;
+    width: 100%;
+    pointer-events: none;
+    fill: none;
+    stroke: #5b3a9e;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.flight-trail .dash-hidden {
+    visibility: hidden;
+}
+
+/* legs tucked and wings beating fast until it lands */
+.perch-legs {
+    transition: opacity 0.3s ease;
+}
+
+.perch.flying .perch-legs {
+    opacity: 0;
+}
+
+.perch.flying .perch-wings {
+    animation-duration: 0.7s;
+}
+
+.perch-legs {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    stroke: #000000;
+    stroke-width: 11;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* tips the drawing back so the body sits closer to level on the edge */
+.perch-fly {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-18deg);
+}
+
+.perch-wings,
+.perch-body {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+}
+
+/* both are the same drawing, cut along the line where the wings meet the body */
+.perch-wings {
+    clip-path: polygon(
+        31.76% 0, 100% 0, 100% 100%, 60.66% 100%, 60.66% 93.65%, 59.23% 91.47%,
+        55.36% 89.8%, 43.2% 75.92%, 31.76% 65.55%
+    );
+    transform-origin: 42.9% 75.6%; /* a point on that line */
+    animation: wing-flap 3s ease-in-out infinite;
+}
+
+.perch-body {
+    clip-path: polygon(
+        0 0, 32.2% 0, 32.2% 65.2%, 43.8% 75.2%, 56% 89%, 60% 91%,
+        61.2% 93.5%, 61.2% 100%, 0 100%
+    );
+}
+
+/*
+ * Two flaps and a rest. 41.3deg lines the transform up with the body, so the wings stay
+ * attached along it while the skew sweeps them back and the scale lowers them.
+ */
+@keyframes wing-flap {
+    0%, 60%, 100% { transform: rotate(41.3deg) skewX(0deg) scaleY(1) rotate(-41.3deg); }
+    15%, 45% { transform: rotate(41.3deg) skewX(-26deg) scaleY(0.62) rotate(-41.3deg); }
+    30% { transform: rotate(41.3deg) skewX(-3deg) scaleY(0.95) rotate(-41.3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .perch-wings {
+        animation: none;
+    }
+}
+
+/* graph paper taped to the cover, sized up front so it doesn't grow while typing */
+.title-note {
+    --tape-w: 8rem;
+    --tape-h: 2.1rem;
+    position: relative;
+    z-index: 1;
+    width: min(9em, 84%);
+    padding: 0.7em 0.4em;
+    /* the vh limit keeps the card inside the folder on short windows */
+    font-size: clamp(2.75rem, min(6vw, 10vh), 6rem);
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(var(--c-bg) 1px, transparent 1px),
+        linear-gradient(90deg, var(--c-bg) 1px, transparent 1px);
+    background-size: 28px 28px;
+    box-shadow: 4px 8px 18px rgba(40, 20, 80, 0.4);
+    transform: rotate(-9deg);
+}
+
+/* tape straddles the top left corner */
+.title-note::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--tape-h) / -2);
+    left: calc(var(--tape-w) / -2);
+    width: var(--tape-w);
+    height: var(--tape-h);
+    background: url("../img/tape.svg") center / 100% 100% no-repeat;
+    transform: rotate(-45deg);
+}
+
+#title {
+    width: 100%;
+    min-height: 2.4em;
+    padding: 0;
+    font-size: 1em;
+    line-height: 1.2;
+    font-family: var(--ff-title);
+    font-weight: lighter;
+    border: none;
+}
+
+/* rotation cancels the sheet's tilt, so the sprig stands as drawn */
+.title-lavender {
+    position: absolute;
+    width: 2.3em;
+    right: -0.75em;
+    bottom: -0.9em;
+    transform: rotate(9deg);
+    filter: drop-shadow(1px 3px 3px rgba(40, 20, 80, 0.35));
+}
+
+/* for typed.js */
+.static-cursor {
+    font-size: 1em;
+    font-family: var(--ff-content);
+    color: #000;
+    animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* projects page specific styling */
+#projects-title {
+    font-family: var(--ff-title);
+    font-weight: 400;
+    margin-top: 2rem;
+}
+
+/* filters are paper labels stuck to the board */
+#lang-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 6% 0;
+}
+
+.lang-btn {
+    --tilt: -1.5deg;
+    padding: 0.45rem 1.1rem;
+    font-size: 1rem;
+    font-family: var(--ff-content);
+    color: black;
+    border: 0;
+    background: #ffffff;
+    box-shadow: 1px 3px 6px rgba(60, 30, 110, 0.3);
+    cursor: pointer;
+    transform: rotate(var(--tilt));
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.lang-btn:nth-child(2n) { --tilt: 1.25deg; }
+.lang-btn:nth-child(3n) { --tilt: -0.5deg; }
+
+.lang-btn:hover {
+    background: #f1e6ff;
+    transform: translateY(-2px) rotate(var(--tilt));
+}
+
+.lang-btn.active {
+    background: var(--c-bd);
+    font-weight: 600;
+}
+
+.repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3rem 2.5rem;
+    align-items: start;
+    padding: 3.5rem 6% 4rem;
+}
+
+.repo-error {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.repo-error a {
+    text-decoration: underline;
+}
+
+/* project notes, every other one is pinned and the rest are taped */
+.repo-card {
+    --tilt: -1.25deg;
+    position: relative;
+    padding: 2rem 1.5rem 1.5rem;
+    background: #ffffff;
+    box-shadow: 2px 5px 12px rgba(60, 30, 110, 0.28);
+    transform: rotate(var(--tilt));
+    transition: transform 0.25s ease;
+}
+
+.repo-card:nth-child(3n + 1) { background: #f1e6ff; }
+.repo-card:nth-child(3n) { background: #e7d8ff; }
+
+.repo-card:nth-child(5n + 2) { --tilt: 1deg; }
+.repo-card:nth-child(5n + 3) { --tilt: -0.5deg; }
+.repo-card:nth-child(5n + 4) { --tilt: 1.5deg; }
+.repo-card:nth-child(5n) { --tilt: -1.75deg; }
+
+.repo-card:nth-child(2n) { margin-top: 0.75rem; }
+
+.repo-card::before {
+    content: "";
+    position: absolute;
+    top: -1.84rem;
+    left: 50%;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-left: -0.74rem; /* lines the needle tip up with the middle of the note */
+    background: url("../img/pin.svg") center / contain no-repeat;
+    filter: drop-shadow(1px 2px 2px rgba(40, 20, 80, 0.35));
+}
+
+.repo-card:nth-child(2n)::before {
+    top: -1rem;
+    width: 7rem;
+    height: 2rem;
+    margin-left: -3.5rem;
+    background: url("../img/tape.svg") center / 100% 100% no-repeat;
+    filter: none;
+    transform: rotate(-2deg);
+}
+
+@media (hover: hover) {
+    .repo-card:hover {
+        transform: translateY(-6px) rotate(0deg);
+    }
+}
+
+.repo-card h3 {
+    font-size: 1.4rem;
+    border: none;
+    width: 100%;
+    margin: 0 0 0.5rem 0;
+    padding: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.repo-card h3 a {
+    color: black;
+    font-weight: 700;
+}
+
+.repo-card h3 a:hover {
+    text-decoration: underline;
+}
+
+.repo-card p {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.repo-langs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+/* little strips of washi tape */
+.lang-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.75rem;
+    background: rgba(170, 132, 245, 0.55);
+    color: #2d1a52;
+    clip-path: polygon(
+        0 0, 100% 0, calc(100% - 4px) 25%, 100% 50%, calc(100% - 4px) 75%, 100% 100%,
+        0 100%, 4px 75%, 0 50%, 4px 25%
+    );
+}
+
+/* about page specific styling */
+#about-content {
+    padding: 6% 7% 5%;
+    gap: 7.5rem; /* leaves room for the butterfly and lavender overhanging the photo */
+    align-items: center;
+}
+
+#about-section {
+    flex: 1;
+    padding: 0;
+}
+
+#about-section h1,
+#skills-section h2,
+.skill-category h3 {
+    font-family: var(--ff-title);
+    font-weight: 400;
+}
+
+/* photo taped into the scrapbook */
+.scrap-photo {
+    position: relative;
+    flex-shrink: 0;
+    transform: rotate(-2deg);
+}
+
+#profile {
+    display: block;
+    height: clamp(26rem, 40vw, 40rem);
+    padding: 0.6rem;
+    background: #ffffff;
+    box-shadow: 3px 5px 14px rgba(60, 30, 110, 0.35);
+}
+
+.tape {
+    position: absolute;
+    width: 9rem;
+    height: 2.6rem;
+    background: url("../img/tape.svg") center / 100% 100% no-repeat;
+}
+
+.tape-tl {
+    top: 1rem;
+    left: -3.2rem;
+    transform: rotate(-45deg);
+}
+
+.tape-br {
+    bottom: 1rem;
+    right: -3.2rem;
+    transform: rotate(-45deg);
+}
+
+.scrap-photo .butterfly {
+    position: absolute;
+    width: 12rem;
+    top: -4.5rem;
+    right: -5.5rem;
+    transform: rotate(8deg);
+}
+
+.scrap-photo .lavender {
+    position: absolute;
+    width: 11rem;
+    bottom: -7rem;
+    right: -5.5rem;
+    transform: rotate(3deg);
+}
+
+/* note taped onto the board */
+#about-p {
+    position: relative;
+    margin-top: 2.5rem;
+    padding: 2rem;
+    background: #ffffff;
+    box-shadow: 2px 4px 10px rgba(60, 30, 110, 0.25);
+    transform: rotate(0.6deg);
+}
+
+#about-p::before {
+    content: "";
+    position: absolute;
+    top: -1.1rem;
+    left: 50%;
+    width: 7.5rem;
+    height: 2.1rem;
+    margin-left: -3.75rem;
+    background: url("../img/tape.svg") center / 100% 100% no-repeat;
+    transform: rotate(-2deg);
+}
+
+#skills-section {
+    padding: 2rem 7% 4rem;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+/* notes pinned to the board */
+.skill-category {
+    position: relative;
+    padding: 2rem 1.75rem 1.75rem;
+    box-shadow: 2px 5px 12px rgba(60, 30, 110, 0.28);
+}
+
+.skill-category:nth-child(1) {
+    background: #f1e6ff;
+    transform: rotate(-1.5deg);
+}
+
+.skill-category:nth-child(2) {
+    background: #ffffff;
+    transform: rotate(1deg) translateY(0.75rem);
+}
+
+.skill-category:nth-child(3) {
+    background: #e7d8ff;
+    transform: rotate(-0.75deg);
+}
+
+/* push pin */
+.skill-category::before {
+    content: "";
+    position: absolute;
+    top: -1.84rem;
+    left: 50%;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-left: -0.74rem; /* lines the needle tip up with the middle of the note */
+    background: url("../img/pin.svg") center / contain no-repeat;
+    filter: drop-shadow(1px 2px 2px rgba(40, 20, 80, 0.35));
+}
+
+.skill-category h3 {
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    text-align: center;
+}
+
+.skill-list {
+    display: block;
+    padding: 0;
+    text-align: left;
+    list-style: "✿  " inside;
+}
+
+.skill-list li {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+}
+
+.skill-list li::marker {
+    color: var(--c-bd);
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+/* experiences: notes clipped along a rope that swags between pins, script.js draws the rope */
+#exp-title {
+    font-family: var(--ff-title);
+    font-weight: 400;
+    margin-top: 2rem;
+}
+
+.rope-board {
+    position: relative;
+    margin: 1.5rem 3% 3rem;
+    padding-bottom: 3rem; /* room to drag the tallest note downwards */
+}
+
+.rope {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+    filter: drop-shadow(1px 3px 2px rgba(60, 30, 110, 0.3));
+}
+
+.rope path {
+    stroke-linecap: round;
+}
+
+.rope-base {
+    stroke: #b8935f;
+    stroke-width: 6px;
+}
+
+.rope-twist {
+    stroke: #7d5f35;
+    stroke-width: 6px;
+    stroke-dasharray: 2 7;
+}
+
+.rope-pin {
+    position: absolute;
+    z-index: 2;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin: -2.34rem 0 0 -0.74rem; /* puts the needle tip on the rope */
+    background: url("../img/pin.svg") center / contain no-repeat;
+    filter: drop-shadow(1px 2px 2px rgba(40, 20, 80, 0.35));
+}
+
+/* script.js reads these spots and hangs the rope from them */
+.rope-pin-1 { left: 0; top: 8px; }
+.rope-pin-2 { left: 27.5%; top: 40px; }
+.rope-pin-3 { left: 50%; top: 62px; }
+.rope-pin-4 { left: 72.5%; top: 38px; }
+.rope-pin-5 { left: 100%; top: 4px; }
+
+.exp-notes {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+    padding: 0 5%;
+}
+
+.exp-note {
+    --tilt: 0deg;
+    position: relative;
+    padding: 2rem 1.5rem 1.5rem;
+    background: #ffffff;
+    box-shadow: 2px 5px 12px rgba(60, 30, 110, 0.28);
+    /* pivots at the clip so it sways like it's hanging */
+    transform-origin: top center;
+    transform: rotate(var(--tilt));
+}
+
+/* top margins set where each note's clip pulls its swag of rope down to */
+.exp-note:nth-child(1) { --tilt: -3.5deg; margin-top: 112px; background: #f1e6ff; }
+.exp-note:nth-child(2) { --tilt: 1deg; margin-top: 162px; }
+.exp-note:nth-child(3) { --tilt: -1.5deg; margin-top: 150px; background: #e7d8ff; }
+.exp-note:nth-child(4) { --tilt: 3deg; margin-top: 104px; }
+
+/* wide layout only: on narrow screens a drag has to stay free to scroll the page */
+@media screen and (min-width: 1100px) {
+    .exp-note {
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+    }
+
+    .exp-note.dragging {
+        cursor: grabbing;
+    }
+
+    .exp-img {
+        pointer-events: none;
+    }
+}
+
+/* clothespin */
+.exp-note::before {
+    content: "";
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    width: 0.9rem;
+    height: 2.5rem;
+    margin-left: -0.45rem;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #c9a875 0 45%, #7d5f35 45% 55%, #c9a875 55%);
+    box-shadow: 1px 2px 3px rgba(40, 20, 80, 0.4);
+}
+
+.exp-note h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.3rem;
+    line-height: 1.25;
+}
+
+.exp-note p {
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+.exp-img {
+    display: block;
+    max-width: 100%;
+    max-height: 7rem;
+    margin: 0 auto 1rem;
+}
+
+/* too narrow for four notes: the rope hangs straight down behind one column */
+@media screen and (max-width: 1099px) {
+    .rope-board {
+        margin-top: 3rem; /* room for the pin between the heading and the rope */
+    }
+
+    .rope,
+    .rope-pin {
+        display: none;
+    }
+
+    .rope-pin-3 {
+        display: block;
+        top: 0;
+    }
+
+    .rope-board::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 6px;
+        margin-left: -3px;
+        background: repeating-linear-gradient(#b8935f 0 7px, #7d5f35 7px 9px);
+    }
+
+    .exp-notes {
+        grid-template-columns: minmax(0, 34rem);
+        justify-content: center;
+        gap: 3.5rem;
+        padding: 3rem 0 2rem;
+    }
+
+    .exp-note:nth-child(n) {
+        margin-top: 0;
+    }
+
+    /* the stronger tilts only suit the swags, which this layout doesn't have */
+    .exp-note:nth-child(1) { --tilt: -1.5deg; }
+    .exp-note:nth-child(4) { --tilt: 1.5deg; }
+}
+
+
+/* contact page specific styling */
+#contact-title {
+    font-family: var(--ff-title);
+    font-weight: 400;
+    margin-top: 2rem;
+}
+
+/* contact methods are notes on the board */
+#contact-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+    padding: 2.5rem 7% 1rem;
+}
+
+.contact-note {
+    --tilt: -1.5deg;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1.25rem 1.5rem;
+    color: black;
+    text-align: center;
+    background: #f1e6ff;
+    box-shadow: 2px 5px 12px rgba(60, 30, 110, 0.28);
+    transform: rotate(var(--tilt));
+    transition: transform 0.25s ease;
+}
+
+.contact-note:nth-child(2) {
+    --tilt: 1deg;
+    background: #ffffff;
+}
+
+.contact-note:nth-child(3) {
+    --tilt: -0.75deg;
+    background: #e7d8ff;
+}
+
+/* pins on the outer notes, tape on the middle one */
+.contact-note::before {
+    content: "";
+    position: absolute;
+    top: -1.84rem;
+    left: 50%;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-left: -0.74rem; /* lines the needle tip up with the middle of the note */
+    background: url("../img/pin.svg") center / contain no-repeat;
+    filter: drop-shadow(1px 2px 2px rgba(40, 20, 80, 0.35));
+}
+
+.contact-note:nth-child(2)::before {
+    top: -1rem;
+    width: 7rem;
+    height: 2rem;
+    margin-left: -3.5rem;
+    background: url("../img/tape.svg") center / 100% 100% no-repeat;
+    filter: none;
+    transform: rotate(-2deg);
+}
+
+@media (hover: hover) {
+    a.contact-note:hover {
+        transform: translateY(-6px) rotate(0deg);
+    }
+}
+
+.contact-note .fa {
+    font-size: 3.5rem;
+    color: #5b3a9e;
+}
+
+.contact-label {
+    font-family: var(--ff-title);
+    font-size: 1.75rem;
+    font-weight: 400;
+}
+
+/* each address is a button that copies itself */
+.copy {
+    display: block;
+    width: 100%;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: black;
+    background: none;
+    border: 0;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.copy:hover {
+    color: #5b3a9e;
+    text-decoration: underline;
+}
+
+.copy-hint {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.copy-popup {
+    position: fixed;
+    background: #333;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    font-family: var(--ff-content);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+}
+
+.copy-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* contact form is a letter taped to the board */
+.contact-letter {
+    position: relative;
+    width: min(52rem, 86%);
+    margin: 3.5rem auto 6rem;
+    padding: 3rem 3rem 2.5rem;
+    background: #ffffff;
+    box-shadow: 3px 6px 16px rgba(60, 30, 110, 0.3);
+    transform: rotate(0.5deg);
+}
+
+/* one long tape, border-image keeps the torn ends in shape at any width */
+.contact-letter::before {
+    content: "";
+    position: absolute;
+    top: -1.1rem;
+    left: 22%;
+    right: 22%;
+    height: 2.1rem;
+    border-style: solid;
+    border-width: 0 44px;
+    border-image: url("../img/tape-long.svg") 0 44 fill / 0 44px stretch;
+    transform: rotate(-0.8deg);
+}
+
+.letter-lavender {
+    position: absolute;
+    width: 10rem;
+    right: -4.5rem;
+    bottom: -4.5rem;
+    transform: rotate(3deg);
+    pointer-events: none;
+}
+
+/* less room beside the form on smaller windows */
+@media screen and (max-width: 1099px) {
+    .letter-lavender {
+        width: 8rem;
+        right: -3rem;
+        bottom: -3.5rem;
+    }
+}
+
+.letter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.letter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 1.25rem;
+}
+
+.letter-input,
+.letter-message {
+    width: 100%;
+    font-family: var(--ff-content);
+    font-size: 1.1rem;
+    color: black;
+    border: 0;
+    border-radius: 0;
+    outline: 0;
+    transition: background-color 0.2s;
+}
+
+.letter-input {
+    padding: 0.35rem 0.25rem;
+    background-color: transparent;
+    border-bottom: 1.5px solid var(--c-bd);
+}
+
+/* ruled lines match the line height, local so they scroll with the text */
+.letter-message {
+    display: block;
+    height: 14rem;
+    padding: 0 0.25rem;
+    line-height: 2rem;
+    resize: vertical;
+    background-color: transparent;
+    /* the 1px gap under each line stops it bleeding across the top edge when tilted */
+    background-image: linear-gradient(
+        transparent calc(2rem - 2.5px),
+        var(--c-bd) calc(2rem - 2.5px) calc(2rem - 1px),
+        transparent calc(2rem - 1px)
+    );
+    background-size: 100% 2rem;
+    background-attachment: local;
+}
+
+.letter-input:focus,
+.letter-message:focus {
+    background-color: #f1e6ff;
+}
+
+.letter-send {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 0.55rem 3rem;
+    font-family: var(--ff-content);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: black;
+    background: var(--c-bd);
+    border: 0;
+    box-shadow: 1px 3px 6px rgba(60, 30, 110, 0.35);
+    cursor: pointer;
+    transform: rotate(-1deg);
+    transition: transform 0.2s ease;
+}
+
+.letter-send:hover {
+    transform: translateY(-2px) rotate(-1deg);
+}
+
+/* too narrow for the addresses in three columns, so Gmail gets its own row */
+@media screen and (max-width: 1099px) {
+    #contact-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact-note:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+}
+
+/* media query: mobile */
+@media screen and (max-width: 767px) {
+    /* containers */
+    /* cancels the gap under the nav so the tabs still touch the cover */
+    .home-folder {
+        margin-top: -4%;
+        min-height: 30rem;
+    }
+
+    /* tabs fill the phone's width, so the butterfly perches on them with room made above */
+    body:has(.home-folder) nav {
+        margin-top: 32vw;
+    }
+
+    body:has(.home-folder) header::after {
+        top: calc(100% - 40px);
+    }
+
+    .perch {
+        width: 8.5rem;
+        right: 1.25rem;
+        bottom: 65px; /* the layer's 20px plus the 45px that clears the tabs */
+    }
+
+    .title-note {
+        --tape-w: 5rem;
+        --tape-h: 1.5rem;
+        width: min(9em, 78%);
+    }
+
+    #about-content {
+        padding: 3.5rem 5% 2rem;
+        gap: 6rem;
+        align-items: center;
+    }
+
+    #about-section {
+        width: 100%;
+    }
+
+    .content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content img {
+        order: -1;
+        max-width: 60%;
+        max-height: 200px;
+    }
+
+    section {
+        width: 70%;
+        padding: 5%;
+    }
+
+    #skills-section {
+        width: 100%;
+        padding: 1rem 8% 2.5rem;
+    }
+
+
+    /* contact page */
+    #contact-list {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 2rem 8% 0;
+    }
+
+    .contact-letter {
+        padding: 2.25rem 1.5rem 2rem;
+    }
+
+    .letter-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .letter-lavender {
+        width: 6.5rem;
+        right: -1.25rem;
+        bottom: -3.5rem;
+    }
+
+    .letter-message {
+        height: 10rem;
+    }
+
+    /* nav bar */
+    header {
+        position: relative;
+    }
+    nav {
+        width: 98%;
+        margin: 10% 2% 4% 0;
+        overflow-x: auto;
+    }
+
+    ul {
+        padding: 0 10px;
+    }
+
+
+    /* horizontal scroll */
+    nav li {
+        flex: 0 0 auto;
+        max-width: 250px;
+        font-size: 1rem;
+        --tab-h: 50px;
+        --tuck: 0px; /* nav scrolls sideways here, so an overhang would get cut off */
+        margin: 0;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    header::after {
+        content: "→";
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        font-weight: 700;
+        opacity: 0.5;
+        pointer-events: none;
+        z-index: 20;
+        background: linear-gradient(to left, white 40%, transparent);
+        padding-left: 10px;
+    }
+
+    /* undo the generic .content img limits, the photo sizes itself by height */
+    .scrap-photo #profile {
+        height: 24rem;
+        max-width: none;
+        max-height: none;
+    }
+
+    .scrap-photo .butterfly,
+    .scrap-photo .lavender {
+        max-width: none;
+        max-height: none;
+        width: 8rem;
+    }
+
+    .scrap-photo .butterfly {
+        top: -3rem;
+        right: -3rem;
+    }
+
+    .scrap-photo .lavender {
+        bottom: -5.5rem;
+        right: -3rem;
+    }
+
+    .tape {
+        width: 6.5rem;
+        height: 2rem;
+    }
+
+    .tape-tl {
+        top: 0.5rem;
+        left: -2.25rem;
+    }
+
+    .tape-br {
+        bottom: 0.5rem;
+        right: -2.25rem;
+    }
+
+    #about-p {
+        padding: 1.5rem;
+    }
+
+    #exp-title {
+        width: 85%;
+    }
+
+    .rope-board {
+        margin-left: 7%;
+        margin-right: 7%;
+    }
+
+    /* skills grid mobile */
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* adjusted typography */
+    h1 {
+        font-size: 2.2rem;
+        width: 100%;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .repo-grid {
+        padding: 3rem 7% 3rem;
+    }
+}

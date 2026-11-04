@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="32" viewBox="0 0 700 32" role="img" aria-label="Long piece of purple tape">
+    <!-- the 44px at each end keep their shape, only the middle stretches to fit -->
+    <path d="M6 3 C60 1.5 120 4.5 190 2.8 C270 1.2 340 4.6 420 3 C500 1.4 580 4.4 694 3 L691 8 L695.5 12 L691.5 16.5 L695.5 21 L691 25 L694 29.5 C610 31 540 27.8 460 29.6 C380 31.2 300 27.8 220 29.4 C140 31 70 28.4 6 29.5 L9 25 L4.5 21 L8.5 16.5 L4.5 12 L9 8 Z"
+        fill="#b48af5" fill-opacity="0.6" stroke="#000000" stroke-width="2.2" stroke-linejoin="round"/>
+    <g fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-opacity="0.9">
+        <path d="M24 8 L18 24"/>
+        <path d="M33 8 L30 16"/>
+        <path d="M681 9 L676 24"/>
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Momo+Signature&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+:root {
+    /* Font Families */
+    --ff-title: 'Momo Signature', cursive;
+    --ff-content: 'Playfair Display', serif;
+
+    /* Backgrounds */
+    --c-bg: #e3c7ff;
+    --gp-bg: url("../img/grainy-purple4.jpg");
+}
+
+/* Colors */
+.purple {
+    --c-b: #f6edff;
+    --c-bd: #aa84f5;
+    --l-bg1: url("../img/grainy-purple.jpeg");
+    --l-bg2: url("../img/grainy-purple1.jpg");
+    --l-bg3: url("../img/grainy-purple3.jpeg");
+    --l-bg4: url("../img/grainy-purple2.jpeg")
+
+}

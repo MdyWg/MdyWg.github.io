@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Mandy's Portfolio</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="./css/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li class="tab1 purple"><a href="home.html">Home</a></li>
+                    <li class="tab2 purple"><a href="about.html">About Me</a></li>
+                    <li class="tab3 purple"><a href="experiences.html">Experiences</a></li>
+                    <li class="tab4 purple"><a href="projects.html">Projects</a></li>
+                    <li class="tab5 purple"><a href="contact.html">Contact</a></li>       
+                </ul> 
+            </nav> 
+        </header>
+        <div class="content-body purple tab5">
+            <h2 id="contact-title">Contact</h2>
+            <div id="contact-list">
+                <a href="https://www.linkedin.com/in/mandy-wang-514859249" target="_blank" class="contact-note">
+                    <i class="fa fa-linkedin" aria-hidden="true"></i>
+                    <span class="contact-label">LinkedIn</span>
+                </a>
+                <a href="https://github.com/MdyWg" target="_blank" class="contact-note">
+                    <i class="fa fa-github" aria-hidden="true"></i>
+                    <span class="contact-label">GitHub</span>
+                </a>
+                <div class="contact-note">
+                    <i class="fa fa-google" aria-hidden="true"></i>
+                    <span class="contact-label">Gmail</span>
+                    <button type="button" class="copy" data-email="mdywg16@gmail.com">Personal: mdywg16@gmail.com</button>
+                    <button type="button" class="copy" data-email="mw5288@nyu.edu">School: mw5288@nyu.edu</button>
+                    <span class="copy-hint">Click an address to copy it</span>
+                </div>
+            </div>
+            <div class="contact-letter">
+                <img src="./img/lavender.png" alt="" class="letter-lavender"/>
+                <form action="https://formspree.io/f/xzdjnndz" method="POST">
+                    <div class="letter-row">
+                        <div class="letter-field">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" class="letter-input" required/>
+                        </div>
+                        <div class="letter-field">
+                            <label for="email">Email:</label>
+                            <input type="text" id="email" name="email" class="letter-input" required/>
+                        </div>
+                    </div>
+                    <div class="letter-field">
+                        <label for="message">Enter Message:</label>
+                        <textarea id="message" name="message" class="letter-message" placeholder="Enter a message here" required></textarea>
+                    </div>
+                    <button class="letter-send purple" type="submit">Send</button>
+                    <input type="hidden" name="subject" value="New submission from {{name}}" />
+                </form>
+            </div>
+        </div>
+        <script src="./js/script.js"></script>
+    </body>
+</html>
