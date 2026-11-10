@@ -20,11 +20,86 @@
         </header>
         <div class="content-body purple tab4">
             <h2 id="projects-title">Projects</h2>
+
+            <div class="spreads">
+                <article class="spread">
+                    <figure class="spread-photo">
+                        <div class="photo-placeholder">photos coming soon</div>
+                        <figcaption>work in progress!</figcaption>
+                    </figure>
+                    <div class="spread-text">
+                        <span class="spread-status">in progress</span>
+                        <h3>Voice-Interactive Autonomous Mobile Robot</h3>
+                        <h4>May 2026 - Present</h4>
+                        <ul class="spread-points">
+                            <li>Debugged STM32F446RE motor firmware for PWM control, encoder feedback and PID speed regulation, and connected it to a Raspberry Pi over UART for motor commands and telemetry</li>
+                            <li>Built wheel odometry from encoder data and turned Nav2 velocity commands into wheel speeds with differential-drive kinematics, fusing odometry with an Extended Kalman Filter</li>
+                            <li>Wrote a ROS2 driver for a time-of-flight depth camera, converting its depth images to laser scans for slam_toolbox mapping and Nav2 navigation</li>
+                            <li>Developing a voice system that transcribes speech with OpenAI Whisper, classifies intent, and plays pygame animations on a monitor</li>
+                        </ul>
+                        <div class="repo-langs">
+                            <span class="lang-tag">ROS2</span>
+                            <span class="lang-tag">Nav2</span>
+                            <span class="lang-tag">Python</span>
+                            <span class="lang-tag">STM32</span>
+                            <span class="lang-tag">Raspberry Pi</span>
+                            <span class="lang-tag">OpenAI Whisper</span>
+                            <span class="lang-tag">pygame</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="spread">
+                    <figure class="spread-photo slideshow" aria-roledescription="carousel" aria-label="VibraSound Vest photos">
+                        <div class="slides">
+                            <img src="./img/vvlogo.jpg" alt="3D printed VibraSound Vest logo" data-caption="VibraSound Vest"/>
+                            <img src="./img/VibraSound%20Vest.png" alt="VibraSound Vest project poster with photos of the vest, its circuitry and a CAD model" data-caption="project poster" class="slide-whole" hidden/>
+                            <img src="./img/cad.png" alt="CAD model of the vest with motor pockets" data-caption="vest CAD model" hidden/>
+                        </div>
+                        <div class="slide-bar">
+                            <button type="button" class="slide-arrow slide-prev" aria-label="Previous photo">
+                                <svg viewBox="0 0 28 20" aria-hidden="true"><path d="M3 10.5 C9 9 15 11.5 24 10"/><path d="M18 4 L24.5 10 L18.5 16"/></svg>
+                            </button>
+                            <figcaption aria-live="polite">VibraSound Vest</figcaption>
+                            <button type="button" class="slide-arrow slide-next" aria-label="Next photo">
+                                <svg viewBox="0 0 28 20" aria-hidden="true"><path d="M3 10.5 C9 9 15 11.5 24 10"/><path d="M18 4 L24.5 10 L18.5 16"/></svg>
+                            </button>
+                        </div>
+                        <div class="slide-dots"></div>
+                    </figure>
+                    <div class="spread-text">
+                        <h3>Music Vibration Vest</h3>
+                        <h4>January 2025 - May 2025</h4>
+                        <ul class="spread-points">
+                            <li>Programmed a wearable that turns music into vibrations, so people with hearing impairments can feel it</li>
+                            <li>Built a real-time Python signal processing pipeline that detects beats in the bass, mid and treble bands using Butterworth bandpass filters and Hilbert envelopes, scaling motor intensity by FFT band energy</li>
+                            <li>Helped program Arduino firmware that parses Bluetooth serial commands and drives the vibration motors with PWM duty cycles mapped to each band's intensity</li>
+                        </ul>
+                        <div class="repo-langs">
+                            <span class="lang-tag">Python</span>
+                            <span class="lang-tag">Arduino</span>
+                            <span class="lang-tag">Signal Processing</span>
+                            <span class="lang-tag">Bluetooth</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <p class="github-divider">Github connected repos</p>
+
             <div id="lang-filters">
                 <button class="lang-btn active" data-lang="all">All</button>
             </div>
             <div id="repo-grid" class="repo-grid"></div>
         </div>
+        <dialog class="photo-viewer" aria-label="Enlarged photo">
+            <figure>
+                <img alt=""/>
+                <video controls playsinline hidden></video>
+                <figcaption></figcaption>
+            </figure>
+            <span class="photo-viewer-hint">click anywhere to close</span>
+        </dialog>
         <script src="./js/script.js"></script>
     </body>
 </html>

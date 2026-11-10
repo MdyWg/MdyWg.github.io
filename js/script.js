@@ -8,14 +8,162 @@ document.addEventListener('DOMContentLoaded', () => {
         activeNavLink.parentElement.style.zIndex = '6'
     }
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // butterfly perched on the folder of the inside pages, clicking it pops up my resume
+    const RESUME_URL = './files/Mandy_Wang_Resume.pdf'
+    const folder = document.querySelector('.content-body')
+    if (folder) {
+        folder.insertAdjacentHTML('afterbegin', `
+            <div class="perch-layer">
+                <svg class="resume-hint" aria-hidden="true">
+                    <defs>
+                        <marker id="hint-arrow" viewBox="0 0 10 10" refX="6" refY="5"
+                            markerWidth="4" markerHeight="4" orient="auto">
+                            <path d="M1 1 L7 5 L1 9"/>
+                        </marker>
+                    </defs>
+                    <path class="hint-path" marker-end="url(#hint-arrow)"/>
+                </svg>
+                <button type="button" class="perch" aria-label="Open my resume" aria-haspopup="dialog">
+                    <!-- units match the drawing's pixels, with 0,0 at the middle of the butterfly -->
+                    <svg class="perch-legs" viewBox="-349.5 -299 699 598" aria-hidden="true">
+                        <path d="M-42 195 C-70 215 -88 235 -92 245 C-90 262 -80 275 -68 285 L-50 286"/>
+                        <path d="M20 218 C0 240 -12 250 -14 258 C-8 270 0 280 12 285 L28 286"/>
+                        <path d="M73 238 C58 252 48 260 48 266 C54 276 62 282 74 285 L90 286"/>
+                    </svg>
+                    <span class="perch-fly">
+                        <img src="./img/butterfly.png" alt="" class="perch-wings"/>
+                        <img src="./img/butterfly.png" alt="" class="perch-body"/>
+                    </span>
+                </button>
+                <span class="hint-label" aria-hidden="true">Click for resume!</span>
+            </div>`)
+
+        document.body.insertAdjacentHTML('beforeend', `
+            <dialog class="resume-dialog" aria-label="Mandy's resume">
+                <div class="resume-sheet">
+                    <button type="button" class="resume-close" aria-label="Close resume">&times;</button>
+                    <div class="resume-actions">
+                        <a class="resume-btn" href="${RESUME_URL}" download="Mandy_Wang_Resume.pdf">Download</a>
+                        <a class="resume-btn" href="${RESUME_URL}" target="_blank" rel="noopener">Open in new tab</a>
+                    </div>
+                    <iframe class="resume-frame" title="Mandy Wang's resume"></iframe>
+                </div>
+            </dialog>`)
+
+        const perch = folder.querySelector('.perch')
+        const layer = perch.parentElement
+        const hintPath = layer.querySelector('.hint-path')
+        const hintLabel = layer.querySelector('.hint-label')
+        const dialog = document.querySelector('.resume-dialog')
+        const sheet = dialog.querySelector('.resume-sheet')
+        const frame = dialog.querySelector('.resume-frame')
+
+        const drawHint = () => {
+            const layerRect = layer.getBoundingClientRect()
+            const navRect = document.querySelector('nav').getBoundingClientRect()
+            const pageTop = -(layerRect.top + window.scrollY) // top of the page in layer units
+            const tabsTop = navRect.top - layerRect.top
+            const { offsetLeft: px, offsetTop: py, offsetWidth: pw, offsetHeight: ph } = perch
+
+            // on narrow phones it shifts right rather than run off the left edge
+            const labelRight = Math.max(px - pw * 0.8, hintLabel.offsetWidth + 12)
+            const labelY = pageTop + (tabsTop - pageTop) * 0.35
+            hintLabel.style.right = `${layer.clientWidth - labelRight}px`
+            hintLabel.style.top = `${labelY}px`
+
+            const start = { x: labelRight + 10, y: labelY + 4 }
+            const end = { x: px - pw * 0.04, y: py + ph * 0.56 }
+            const dx = end.x - start.x
+
+            // too tight for a loop on phones, so it's a simple hook over to the wing
+            if (dx < pw * 0.6) {
+                hintPath.setAttribute('d', `M ${start.x} ${start.y}
+                    C ${start.x + 40} ${start.y - 14} ${end.x - 6} ${end.y - 45} ${end.x} ${end.y}`)
+                return
+            }
+
+            const loop = Math.max(end.y - start.y, dx * 0.6)
+            const at = (x, y) => `${start.x + x * dx} ${start.y + y * loop}`
+            hintPath.setAttribute('d', `M ${at(0, 0)}
+                C ${at(0.35, -0.2)} ${at(0.72, 0.02)} ${at(0.64, 0.42)}
+                C ${at(0.57, 0.78)} ${at(0.26, 0.72)} ${at(0.33, 0.42)}
+                C ${at(0.4, 0.1)} ${at(0.75, 0.15)} ${end.x} ${end.y}`)
+        }
+        drawHint()
+        window.addEventListener('resize', drawHint)
+        document.fonts.ready.then(drawHint) // the tabs change height once the font loads
+
+        const burst = (x, y) => {
+            for (let i = 0; i < 9; i++) {
+                const angle = (i / 9) * Math.PI * 2 + Math.random() * 0.5
+                const distance = 50 + Math.random() * 45
+                const flower = document.createElement('span')
+                flower.className = 'burst-flower'
+                flower.textContent = '✿'
+                flower.style.left = `${x}px`
+                flower.style.top = `${y}px`
+                flower.style.setProperty('--dx', `${Math.cos(angle) * distance}px`)
+                flower.style.setProperty('--dy', `${Math.sin(angle) * distance}px`)
+                flower.addEventListener('animationend', () => flower.remove())
+                document.body.appendChild(flower)
+            }
+        }
+
+        let origin = { x: 0, y: 0 }
+        const setOrigin = () => {
+            sheet.style.setProperty('--from-x', `${origin.x - window.innerWidth / 2}px`)
+            sheet.style.setProperty('--from-y', `${origin.y - window.innerHeight / 2}px`)
+        }
+
+        const openResume = () => {
+            if (!frame.src) frame.src = `${RESUME_URL}#toolbar=0&navpanes=0&view=FitH`
+            setOrigin()
+            dialog.showModal()
+        }
+
+        const closeResume = () => {
+            if (!dialog.open || dialog.classList.contains('closing')) return
+            if (reducedMotion) return dialog.close()
+            setOrigin()
+            dialog.classList.add('closing')
+            sheet.addEventListener('animationend', () => {
+                dialog.classList.remove('closing')
+                dialog.close()
+            }, { once: true })
+        }
+
+        perch.addEventListener('click', () => {
+            const rect = perch.getBoundingClientRect()
+            origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+            if (reducedMotion) return openResume()
+            if (perch.classList.contains('hopping')) return
+            burst(origin.x, origin.y)
+            perch.classList.add('hopping')
+            setTimeout(openResume, 350)
+        })
+        perch.addEventListener('animationend', (e) => {
+            if (e.animationName === 'perch-hop') perch.classList.remove('hopping')
+        })
+
+        dialog.querySelector('.resume-close').addEventListener('click', closeResume)
+        dialog.addEventListener('cancel', (e) => {
+            e.preventDefault() // Esc closes with the animation too
+            closeResume()
+        })
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) closeResume() // a click on the dimmed backdrop
+        })
+    }
+
     // butterfly flies in along a dashed trail and lands on the folder (home page)
     const perch = document.querySelector('.perch')
-    if (perch) {
-        const trail = document.querySelector('.flight-trail')
+    const trail = document.querySelector('.flight-trail')
+    if (perch && trail) {
         const FLIGHT_MS = 5000
         let frame = null
 
-        // lays out the path and dashes to fit the current window, returns what the flight needs
         const buildTrail = () => {
             const layer = perch.parentElement
             const trailHeight = layer.parentElement.getBoundingClientRect().top + window.scrollY
@@ -125,227 +273,301 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    // rope with draggable notes (experiences page)
+    // draggable notes and photos joined by straight ropes (experiences page)
     const ropeBoard = document.querySelector('.rope-board')
     if (ropeBoard) {
-        const POINTS_PER_SPAN = 14 // rope is a chain of points, more is smoother
-        const SLACK = 1.02 // rope is this much longer than the straight distance, which makes it sag
-        const GRAVITY = 0.5
-        const STIFFNESS_PASSES = 14 // how many times per frame the rope corrects its length
-        const ROPE_DRAG = 0.8 // how much of its speed the rope keeps each frame, lower stops wobble sooner
         const MAX_SWING = 14 // degrees
+        const DRAG_START = 5 // px a photo has to move before it counts as a drag rather than a click
 
-        const wideLayout = window.matchMedia('(min-width: 1100px)')
+        const wideLayout = window.matchMedia('(min-width: 1300px)') // matches the scattered board in style.css
         const noteEls = [...ropeBoard.querySelectorAll('.exp-note')]
-        const paths = ropeBoard.querySelectorAll('.rope path')
-        let spans = []
-        let notes = []
+        const photoEls = [...ropeBoard.querySelectorAll('.evidence-photo')]
+        const draggableEls = [...noteEls, ...photoEls]
+        const ropePaths = ropeBoard.querySelectorAll('.rope path')
+        const photoRopePaths = ropeBoard.querySelectorAll('.strings path')
+        const anchors = [...ropeBoard.querySelectorAll('.string-anchor')]
+        const photoPins = [...ropeBoard.querySelectorAll('.evidence-pin')]
+        const pinLayer = ropeBoard.querySelector('.pin-layer')
+        let pins = []
+        let items = [] // one per draggable element, only filled on the wide layout
         let frame = null
-        let topNote = 1
+        let topItem = 1
 
-        // one span of rope from a to b, its middle point is held by the note's clip
-        const makeSpan = (a, b, note) => {
-            const buildLength = (from, to) =>
-                Math.hypot(to.x - from.x, to.y - from.y) * SLACK / POINTS_PER_SPAN
-            const points = []
-            const addRun = (from, to, skipFirst) => {
-                for (let i = skipFirst ? 1 : 0; i <= POINTS_PER_SPAN; i++) {
-                    const x = from.x + (to.x - from.x) * i / POINTS_PER_SPAN
-                    const y = from.y + (to.y - from.y) * i / POINTS_PER_SPAN
-                    points.push({ x, y, oldX: x, oldY: y })
-                }
-            }
-            addRun(a, note.clip, false)
-            addRun(note.clip, b, true)
-            return {
-                points,
-                note,
-                linkLengths: points.slice(1).map((_, i) =>
-                    i < POINTS_PER_SPAN ? buildLength(a, note.clip) : buildLength(note.clip, b))
-            }
+        // where a rope ties onto a pin, just above its collar, in board coordinates
+        const knot = (pin) => {
+            const board = ropeBoard.getBoundingClientRect()
+            const r = pin.getBoundingClientRect()
+            return { x: r.left - board.left + r.width * 0.5, y: r.top - board.top + r.height * 0.55 }
         }
 
-        const stepRope = () => {
-            let moved = 0
-            spans.forEach(({ points, note, linkLengths }) => {
-                const last = points.length - 1
-                for (let i = 1; i < last; i++) {
-                    if (i === POINTS_PER_SPAN) continue
-                    const p = points[i]
-                    const x = p.x + (p.x - p.oldX) * ROPE_DRAG
-                    const y = p.y + (p.y - p.oldY) * ROPE_DRAG + GRAVITY
-                    p.oldX = p.x
-                    p.oldY = p.y
-                    p.x = x
-                    p.y = y
-                }
-                const clip = points[POINTS_PER_SPAN]
-                clip.x = note.clip.x + note.x
-                clip.y = note.clip.y + note.y
-
-                for (let pass = 0; pass < STIFFNESS_PASSES; pass++) {
-                    for (let i = 0; i < last; i++) {
-                        const a = points[i]
-                        const b = points[i + 1]
-                        const dx = b.x - a.x
-                        const dy = b.y - a.y
-                        const distance = Math.hypot(dx, dy) || 1
-                        const correction = (distance - linkLengths[i]) / distance
-                        const aFixed = i === 0 || i === POINTS_PER_SPAN
-                        const bFixed = i + 1 === last || i + 1 === POINTS_PER_SPAN
-                        const aShare = aFixed ? 0 : bFixed ? 1 : 0.5
-                        const bShare = bFixed ? 0 : aFixed ? 1 : 0.5
-                        a.x += dx * correction * aShare
-                        a.y += dy * correction * aShare
-                        b.x -= dx * correction * bShare
-                        b.y -= dy * correction * bShare
-                    }
-                }
-                points.forEach((p, i) => {
-                    if (i === POINTS_PER_SPAN) return // the clip follows its note and isn't simulated
-                    moved = Math.max(moved, Math.abs(p.x - p.oldX), Math.abs(p.y - p.oldY))
+        const drawRopes = () => {
+            if (items.length) {
+                let d = `M ${pins[0].x} ${pins[0].y}`
+                // left to right across the board, whatever order the notes are in the page
+                items.slice(0, noteEls.length).sort((a, b) => a.clip.x - b.clip.x).forEach((note, i) => {
+                    d += ` L ${note.clip.x + note.x} ${note.clip.y + note.y} L ${pins[i + 1].x} ${pins[i + 1].y}`
                 })
-            })
-            return moved
-        }
-
-        const drawRope = () => {
-            const d = spans.map(({ points }) => {
-                let line = `M ${points[0].x} ${points[0].y}`
-                for (let i = 1; i < points.length - 1; i++) {
-                    const midX = (points[i].x + points[i + 1].x) / 2
-                    const midY = (points[i].y + points[i + 1].y) / 2
-                    line += ` Q ${points[i].x} ${points[i].y} ${midX} ${midY}`
-                }
-                const end = points[points.length - 1]
-                return `${line} L ${end.x} ${end.y}`
+                ropePaths.forEach((path) => path.setAttribute('d', d))
+            }
+            const d = anchors.map((anchor, i) => {
+                const from = knot(anchor)
+                const to = knot(photoPins[i])
+                return `M ${from.x} ${from.y} L ${to.x} ${to.y}`
             }).join(' ')
-            paths.forEach((path) => path.setAttribute('d', d))
+            photoRopePaths.forEach((path) => path.setAttribute('d', d))
+
+            // the ropes lie on top of the cards, so the pins and clothespins are drawn over the
+            // ropes here, where the real ones would be (those stay hidden, only for measuring)
+            const board = ropeBoard.getBoundingClientRect()
+            const pinImages = [...anchors, ...photoPins].map((pin) => {
+                const r = pin.getBoundingClientRect()
+                return `<image href="./img/pin.svg" x="${r.left - board.left}" y="${r.top - board.top}"
+                    width="${r.width}" height="${r.height}"/>`
+            })
+            const clothespins = items.slice(0, noteEls.length).map((note) => {
+                const x = note.clip.x + note.x
+                const y = note.clip.y + note.y
+                return `<rect class="clothespin" x="-7" y="-16" width="14" height="40" rx="2"
+                    transform="translate(${x} ${y}) rotate(${note.tilt + note.swing})"/>`
+            })
+            pinLayer.innerHTML = clothespins.join('') + pinImages.join('')
         }
 
-        const clampToBoard = (note) => {
-            note.x = Math.min(note.maxX, Math.max(note.minX, note.x))
-            note.y = Math.min(note.maxY, Math.max(note.minY, note.y))
+        const clampToBoard = (item) => {
+            item.x = Math.min(item.maxX, Math.max(item.minX, item.x))
+            item.y = Math.min(item.maxY, Math.max(item.minY, item.y))
         }
 
-        const stepNotes = () => {
+        const stepItems = () => {
             let moving = false
-            notes.forEach((note) => {
-                // leans with its movement, pivoting at the clip, and eases level without overshooting
-                const targetSwing = Math.max(-MAX_SWING, Math.min(MAX_SWING, -note.speedX * 0.7))
-                note.swing += (targetSwing - note.swing) * 0.2
-                note.speedX *= 0.6
+            items.forEach((item) => {
+                const targetSwing = Math.max(-MAX_SWING, Math.min(MAX_SWING, -item.speedX * 0.7))
+                item.swing += (targetSwing - item.swing) * 0.2
+                item.speedX *= 0.6
 
-                if (!note.dragging && Math.abs(note.swing) < 0.05) {
-                    note.swing = 0
-                    note.speedX = 0
+                if (!item.dragging && Math.abs(item.swing) < 0.05) {
+                    item.swing = 0
+                    item.speedX = 0
                 } else {
                     moving = true
                 }
-                note.el.style.translate = `${note.x}px ${note.y}px`
-                note.el.style.rotate = `${note.swing}deg`
+                item.el.style.translate = `${item.x}px ${item.y}px`
+                item.el.style.rotate = `${item.swing}deg`
             })
             return moving
         }
 
         // only runs while something is moving, so a page at rest does no work
         const tick = () => {
-            const notesMoving = stepNotes()
-            const ropeMoved = stepRope()
-            drawRope()
-            frame = notesMoving || ropeMoved > 0.02 ? requestAnimationFrame(tick) : null
+            const moving = stepItems()
+            drawRopes()
+            frame = moving ? requestAnimationFrame(tick) : null
         }
         const wake = () => {
             if (frame === null) frame = requestAnimationFrame(tick)
         }
 
-        const setDragLimits = (note) => {
-            const left = note.el.offsetLeft + note.el.offsetParent.offsetLeft
-            const top = note.el.offsetTop + note.el.offsetParent.offsetTop
-            note.minX = -left
-            note.maxX = ropeBoard.clientWidth - left - note.el.offsetWidth
-            note.minY = -top - 60
-            note.maxY = Math.max(0, ropeBoard.clientHeight - top - note.el.offsetHeight)
+        const setDragLimits = (item) => {
+            const left = item.el.offsetLeft + item.el.offsetParent.offsetLeft
+            const top = item.el.offsetTop + item.el.offsetParent.offsetTop
+            item.minX = -left
+            item.maxX = ropeBoard.clientWidth - left - item.el.offsetWidth
+            item.minY = -top - 60
+            item.maxY = Math.max(0, ropeBoard.clientHeight - top - item.el.offsetHeight)
         }
 
-        const buildRope = () => {
+        const buildBoard = () => {
             if (frame !== null) cancelAnimationFrame(frame)
             frame = null
-            noteEls.forEach((el) => {
+            draggableEls.forEach((el) => {
+                if (el.dataset.below) el.style.removeProperty('top')
                 el.style.removeProperty('translate')
                 el.style.removeProperty('rotate')
                 el.style.removeProperty('z-index')
                 el.classList.remove('dragging')
             })
             if (!wideLayout.matches) {
-                spans = []
-                notes = []
-                paths.forEach((path) => path.removeAttribute('d'))
+                items = []
+                ropePaths.forEach((path) => path.removeAttribute('d'))
+                drawRopes()
                 return
             }
 
-            const pins = [...ropeBoard.querySelectorAll('.rope-pin')].map((pin) => {
+            // a photo with data-below hangs a set distance under that note's bottom edge,
+            // so its rope stays the same length however tall the note's text makes it
+            photoEls.forEach((el) => {
+                const above = el.dataset.below && document.getElementById(el.dataset.below)
+                if (!above) return
+                el.style.top = `${above.offsetTop + above.offsetHeight + Number(el.dataset.gap || 0)}px`
+            })
+
+            pins = [...ropeBoard.querySelectorAll('.rope-pin')].map((pin) => {
                 const style = getComputedStyle(pin)
                 return { x: parseFloat(style.left), y: parseFloat(style.top) }
             })
-            notes = noteEls.map((el) => {
-                const note = {
+            items = draggableEls.map((el) => {
+                const item = {
                     el,
                     clip: {
                         x: el.offsetLeft + el.offsetParent.offsetLeft + el.offsetWidth / 2,
                         y: el.offsetTop + el.offsetParent.offsetTop - 8
                     },
-                    x: 0, y: 0, speedX: 0, swing: 0, dragging: false
+                    tilt: parseFloat(getComputedStyle(el).getPropertyValue('--tilt')) || 0,
+                    x: 0, y: 0, speedX: 0, swing: 0, dragging: false, moved: false
                 }
-                setDragLimits(note)
-                return note
+                setDragLimits(item)
+                return item
             })
-            spans = notes.map((note, i) => makeSpan(pins[i], pins[i + 1], note))
-
-            // settles into its hanging shape before anyone sees it
-            for (let i = 0; i < 300; i++) stepRope()
-            drawRope()
+            drawRopes()
         }
 
-        noteEls.forEach((el, index) => {
+        draggableEls.forEach((el, index) => {
             el.addEventListener('pointerdown', (e) => {
-                const note = notes[index]
-                if (!note) return
+                const item = items[index]
+                if (!item) return // narrow layout: no dragging, so the page can scroll
                 e.preventDefault()
                 el.setPointerCapture(e.pointerId)
-                el.classList.add('dragging')
-                setDragLimits(note)
-                note.dragging = true
-                el.style.zIndex = ++topNote // the last one moved stays on top after it's dropped
-                note.grabX = e.clientX - note.x
-                note.grabY = e.clientY - note.y
-                wake()
+                setDragLimits(item)
+                item.dragging = true
+                item.moved = false
+                item.startX = e.clientX
+                item.startY = e.clientY
+                item.grabX = e.clientX - item.x
+                item.grabY = e.clientY - item.y
+                el.style.zIndex = ++topItem // the last one moved stays on top after it's dropped
             })
             el.addEventListener('pointermove', (e) => {
-                const note = notes[index]
-                if (!note || !note.dragging) return
-                const oldX = note.x
-                note.x = e.clientX - note.grabX
-                note.y = e.clientY - note.grabY
-                clampToBoard(note)
-                note.speedX = note.x - oldX
+                const item = items[index]
+                if (!item || !item.dragging) return
+                if (!item.moved) {
+                    if (Math.hypot(e.clientX - item.startX, e.clientY - item.startY) < DRAG_START) return
+                    item.moved = true
+                    el.classList.add('dragging')
+                }
+                const oldX = item.x
+                item.x = e.clientX - item.grabX
+                item.y = e.clientY - item.grabY
+                clampToBoard(item)
+                item.speedX = item.x - oldX
                 wake()
             })
             const release = () => {
-                const note = notes[index]
-                if (!note || !note.dragging) return
-                note.dragging = false
-                note.speedX = 0 // stays where it was dropped, with no throw
+                const item = items[index]
+                if (!item || !item.dragging) return
+                item.dragging = false
+                item.speedX = 0 // stays where it was dropped, with no throw
                 el.classList.remove('dragging')
                 wake()
             }
             el.addEventListener('pointerup', release)
             el.addEventListener('pointercancel', release)
+            // a photo that was dragged shouldn't also open big when it's let go
+            el.addEventListener('click', (e) => {
+                const item = items[index]
+                if (item && item.moved) {
+                    e.stopImmediatePropagation()
+                    item.moved = false
+                }
+            })
         })
 
-        buildRope()
-        window.addEventListener('resize', buildRope)
+        buildBoard()
+        window.addEventListener('resize', buildBoard)
+        // photos and fonts arriving late move everything, so it all gets measured again
+        window.addEventListener('load', buildBoard)
+        document.fonts.ready.then(buildBoard)
     }
+
+    // click a photo or the video to see it bigger (experiences and projects pages)
+    const viewer = document.querySelector('.photo-viewer')
+    if (viewer) {
+        const bigImg = viewer.querySelector('img')
+        const bigVideo = viewer.querySelector('video')
+        const bigCaption = viewer.querySelector('figcaption')
+        const hint = viewer.querySelector('.photo-viewer-hint')
+
+        // the board's clip plays on its own unless the visitor has asked for less motion
+        document.querySelectorAll('.evidence-photo video').forEach((clip) => {
+            if (reducedMotion) {
+                clip.removeAttribute('autoplay')
+                clip.pause()
+            }
+        })
+
+        document.querySelectorAll('.evidence-photo').forEach((photo) => {
+            photo.addEventListener('click', () => {
+                const clip = photo.querySelector('video')
+                const img = photo.querySelector('img')
+                bigImg.hidden = Boolean(clip)
+                bigVideo.hidden = !clip
+                if (clip) {
+                    bigVideo.src = clip.currentSrc || clip.src
+                    bigVideo.currentTime = 0
+                    bigVideo.play().catch(() => {}) // the click counts as permission to play with sound
+                    hint.textContent = 'click outside the video to close'
+                } else {
+                    bigImg.src = img.src
+                    bigImg.alt = img.alt
+                    hint.textContent = 'click anywhere to close'
+                }
+                bigCaption.textContent = photo.querySelector('.evidence-caption').textContent
+                viewer.showModal()
+            })
+        })
+
+        document.querySelectorAll('.spread-photo img').forEach((img) => {
+            img.addEventListener('click', () => {
+                bigImg.hidden = false
+                bigVideo.hidden = true
+                bigImg.src = img.src
+                bigImg.alt = img.alt
+                hint.textContent = 'click anywhere to close'
+                bigCaption.textContent = img.dataset.caption ||
+                    img.closest('.spread-photo').querySelector('figcaption').textContent
+                viewer.showModal()
+            })
+        })
+
+        // clicks on the video work its controls instead of closing
+        viewer.addEventListener('click', (e) => {
+            if (e.target !== bigVideo) viewer.close()
+        })
+        viewer.addEventListener('close', () => bigVideo.pause())
+    }
+
+    // photo slideshows on the projects page: arrows, dots, and left/right keys
+    document.querySelectorAll('.slideshow').forEach((show) => {
+        const slides = [...show.querySelectorAll('.slides img')]
+        const caption = show.querySelector('figcaption')
+        const dotBox = show.querySelector('.slide-dots')
+        let current = 0
+
+        const dots = slides.map((slide, i) => {
+            const dot = document.createElement('button')
+            dot.type = 'button'
+            dot.className = 'slide-dot'
+            dot.textContent = '✿'
+            dot.setAttribute('aria-label', `Photo ${i + 1} of ${slides.length}`)
+            dot.addEventListener('click', () => go(i))
+            dotBox.appendChild(dot)
+            return dot
+        })
+
+        const go = (index) => {
+            current = (index + slides.length) % slides.length
+            slides.forEach((slide, i) => { slide.hidden = i !== current })
+            dots.forEach((dot, i) => dot.setAttribute('aria-current', i === current))
+            caption.textContent = slides[current].dataset.caption
+        }
+
+        show.querySelector('.slide-prev').addEventListener('click', () => go(current - 1))
+        show.querySelector('.slide-next').addEventListener('click', () => go(current + 1))
+        show.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') go(current - 1)
+            if (e.key === 'ArrowRight') go(current + 1)
+        })
+        go(0)
+    })
 
     // use typed.js for portfolio title animation
     if (document.querySelector('#title')) {
@@ -367,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('repo-grid')) {
         let activeFilter = 'all'
 
-        const HIDDEN_REPOS = ['apcsa_material', 'overfishing-site', 'Databases2026', 'IntroWebDevClass']
+        const HIDDEN_REPOS = ['apcsa_material', 'overfishing-site', 'Databases2026', 'IntroWebDevClass', 'DynamicWebDev']
         const isShown = (name) =>
             !HIDDEN_REPOS.some((hidden) => hidden.toLowerCase() === name.toLowerCase())
 

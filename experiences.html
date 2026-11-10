@@ -21,46 +21,89 @@
         <div class="content-body purple tab3">
             <h2 id="exp-title">Experiences</h2>
             <div class="rope-board">
-                <!-- script.js draws the rope and moves it with the notes -->
                 <svg class="rope" aria-hidden="true">
                     <path class="rope-base"/>
                     <path class="rope-twist"/>
+                </svg>
+                <svg class="strings" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="clip-wood">
+                            <stop offset="0.45" stop-color="#c9a875"/>
+                            <stop offset="0.45" stop-color="#7d5f35"/>
+                            <stop offset="0.55" stop-color="#7d5f35"/>
+                            <stop offset="0.55" stop-color="#c9a875"/>
+                        </linearGradient>
+                    </defs>
+                    <path class="rope-base"/>
+                    <path class="rope-twist"/>
+                    <g class="pin-layer"></g>
                 </svg>
                 <span class="rope-pin rope-pin-1"></span>
                 <span class="rope-pin rope-pin-2"></span>
                 <span class="rope-pin rope-pin-3"></span>
                 <span class="rope-pin rope-pin-4"></span>
-                <span class="rope-pin rope-pin-5"></span>
 
                 <div class="exp-notes">
-                    <article class="exp-note">
-                        <img src="./img/cs1113.png" alt="CS1113 attendance tracker" class="exp-img"/>
-                        <h3>Computer Science Course Assistant</h3>
-                        <h4>September 2025 - Present</h4>
-                        <p>I currently work as a CS course assistant for CS 1113. As a course assistant, I teach weekly lab sections, host office hours, and conduct homework and quiz gradings for students.</p>
-                    </article>
-
-                    <article class="exp-note">
-                        <h3>Flexible AI-enabled Mechatronics Systems Lab (FAMS)</h3>
-                        <h4>September 2025 - January 2026</h4>
-                        <p>Part of the computer vision subteam for FAMS, where I was a researcher. I learned the fundamentals of MONAI, a PyTorch-based framework for training medical imaging data, and how to apply it within the scope of 3D segmentation of medical images, especially for tumor detection.</p>
-                    </article>
-
-                    <article class="exp-note">
+                    <article class="exp-note" id="rdt-note">
+                        <!-- one pin per photo, in the same order as the photos -->
+                        <span class="string-anchor anchor-1" aria-hidden="true"></span>
+                        <span class="string-anchor anchor-2" aria-hidden="true"></span>
+                        <span class="string-anchor anchor-3" aria-hidden="true"></span>
+                        <span class="string-anchor anchor-4" aria-hidden="true"></span>
                         <img src="./img/rdt-logo.png" alt="RDT logo" class="exp-img"/>
-                        <h3>Robotic Design Team</h3>
-                        <h4>January 2025 - Present</h4>
-                        <p>One of the leads for the Robotic Design Team's (RDT) software competency, whose goal is to participate in NASA's Lunabotics competition. More specifically, I am currently the software systems engineer and I work with the mechanical and electrical systems engineers to plan and design robot requirements and specifications.</p>
+                        <h3>Software Lead, NYU Robotics Design Team</h3>
+                        <h4>September 2025 - Present</h4>
+                        <p>I lead a 10+ member software subteam building a ROS2 autonomy stack for a NASA Lunabotics excavation rover, spanning Nav2, RTAB-Map SLAM with the RealSense D455 (previously, current approach is to work with lidars), AprilTag localization, and mission state machines. As a systems engineer last year, I 
+                            also worked with the mechanical and electrical subteams through design reviews to define rover requirements, strategy, and hardware-software integration with the Jetson Orin Nano and Teensy. </p>
                     </article>
 
-                    <article class="exp-note">
-                        <h3>America Reads Tutor</h3>
-                        <h4>October 2024 - January 2025</h4>
-                        <p>Worked alongside elementary school teachers in the classroom to help teach fifth grade students subjects such as reading and math.</p>
+                    <article class="exp-note" id="cs-note">
+                        <img src="./img/cs1113.jpg" alt="CS1113 attendance tracker" class="exp-img"/>
+                        <h3>Course Assistant, NYU Tandon Computer Science Department</h3>
+                        <h4>September 2025 - Present</h4>
+                        <p>I lead weekly lab sections for 50+ students, teaching core Python concepts and guiding them through coding problems. I also hold weekly one-on-one office hours to help students debug their code, and work with professors to grade homework assignments and lab exams.</p>
                     </article>
+
+                    <article class="exp-note" id="fams-note">
+                        <img src="./img/fams.png" alt="FAMS lab logo" class="exp-img"/>
+                        <h3>Student Researcher, Flexible AI-Enabled Mechatronics Systems Lab (FAMS)</h3>
+                        <h4>September 2025 - January 2026</h4>
+                        <p>On the computer vision subteam, I prototyped a 3D CNN in PyTorch and MONAI that classifies kidney tumors in KiTS23 CT scans, and generated Grad-CAM heatmaps to visualize which regions of each scan influenced the model's predictions.</p>
+                    </article>
+
+                    <div class="evidence">
+                        <button type="button" class="evidence-photo photo-rover" aria-label="Enlarge: our Luna rover">
+                            <span class="evidence-pin"></span>
+                            <img src="./img/rover.png" alt="Render of the RDT Lunabotics rover"/>
+                            <span class="evidence-caption">Luna rover model</span>
+                        </button>
+                        <button type="button" class="evidence-photo photo-map" data-below="rdt-note" data-gap="80" aria-label="Enlarge: RTAB-Map SLAM run">
+                            <span class="evidence-pin"></span>
+                            <img src="./img/map.png" alt="RTAB-Map SLAM run mapping a hallway, with camera features, a 3D point cloud and the 2D map"/>
+                            <span class="evidence-caption">RTAB-Map hallway mapping</span>
+                        </button>
+                        <button type="button" class="evidence-photo photo-poster" data-below="cs-note" data-gap="35" aria-label="Enlarge: Luna Rover team poster">
+                            <span class="evidence-pin"></span>
+                            <img src="./img/research.png" alt="NYU Robotics Design Team's Luna Rover poster"/>
+                            <span class="evidence-caption">research expo poster</span>
+                        </button>
+                        <button type="button" class="evidence-photo photo-video" data-below="fams-note" data-gap="45" aria-label="Watch: excavation video">
+                            <span class="evidence-pin"></span>
+                            <video src="./files/Autoex.mp4" muted loop autoplay playsinline preload="metadata" aria-hidden="true"></video>
+                            <span class="evidence-caption">excavation</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+        <dialog class="photo-viewer" aria-label="Enlarged photo">
+            <figure>
+                <img alt=""/>
+                <video controls playsinline hidden></video>
+                <figcaption></figcaption>
+            </figure>
+            <span class="photo-viewer-hint">click anywhere to close</span>
+        </dialog>
         <script src="./js/script.js"></script>
     </body>
 </html>
